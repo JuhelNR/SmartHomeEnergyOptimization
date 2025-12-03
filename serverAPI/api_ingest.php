@@ -2,7 +2,7 @@
 require "../vendor/autoload.php";
 
 //Check if the Page was loaded correctly
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo "!Restricted access";
     header("location: ../webApp/index.php");
 }
@@ -15,8 +15,7 @@ else{
         $hum = $_POST["Hum"];
         $mot = $_POST["mot"];
 
-
-        //Sanitize and Insert data from ESP readings to database
+        //SANITIZE AND INSERT READINGS INTO DATABASE
         if ($temp == "" || $hum == "" || $mot == "") {
             $stmt = conn -> prepare("INSERT into readings (temp, hum, mot) values (?, ?, ?)");
             $stmt->bind_param("sss", $temp, $hum, $mot);
@@ -28,5 +27,8 @@ else{
             echo"Missing Data";
         }
     }
+
+    //CLOSE CONNECTION
+    conn->closeConnection();
 
 }
