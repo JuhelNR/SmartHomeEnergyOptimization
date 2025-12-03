@@ -37,7 +37,7 @@ The **Smart Home Energy Optimization** project is a comprehensive system designe
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/username/SmartHomeEnergyOptimization.git
+git clone https://github.com/JuhelNR/SmartHomeEnergyOptimization.git
 ```
 
 2. **Database Configuration:**
