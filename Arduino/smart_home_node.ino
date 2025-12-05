@@ -1,65 +1,104 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <SPIFFS.h>
 
-const char* ssid = "WIFI_NAME";       // TODO: Change this
-const char* password = "WIFI_PASS";   // TODO: Change this
+const char* ssid = "WIFI_NAME";
+const char* password = "WIFI_PASS";
+
+// FUNCTION TO LOG MESSAGES INTO /log.txt
+void logToFile(String message) {
+    File logFile = SPIFFS.open("../monitoring/esp_post.log", FILE_APPEND);
+    if (!logFile) {
+        Serial.println("ERROR: Could not open log file!");
+        return;
+    }
+
+    logFile.println(message);
+    logFile.close();
+}
+
+String getStatus(){
+
+       //TODO: THIS WILL RETURN A GENERAL SYSTEM STATUS
+}
 
 void setup() {
     Serial.begin(9600);
+
+    // MOUNT SPIFFS FILE SYSTEM
+    if (!SPIFFS.begin(true)) {
+        Serial.println("ERROR: SPIFFS MOUNT FAILED");
+        return;
+    }
+
+    logToFile("=== DEVICE BOOTED ===");
 
     WiFi.begin(ssid, password);
 
     int attempts = 0;
 
+    // TRY CONNECTING 5 TIMES
     while (WiFi.status() != WL_CONNECTED && attempts < 5) {
         delay(500);
         Serial.println("Connecting to WiFi...");
+        logToFile("Trying WiFi connection... attempt " + String(attempts + 1));
         attempts++;
     }
 
     if (WiFi.status() == WL_CONNECTED) {
-        Serial.println("WiFi connection established!");
-        Serial.print("IP Address: ");
-        Serial.println(WiFi.localIP());
+        String ip = WiFi.localIP().toString();
+        Serial.println("WiFi connected! IP: " + ip);
+        logToFile("WiFi connected. IP: " + ip);
     } else {
         Serial.println("WiFi connection failed after 5 attempts.");
-        Serial.println("Please check credentials in Arduino/smart_home_node.ino.");
-        return; // Stop setup, ESP won't try to send data
+        logToFile("ERROR: WiFi connection FAILED after 5 attempts.");
+        return; // STOP THE PROGRAM
     }
 }
 
 void loop() {
     if (WiFi.status() == WL_CONNECTED) {
 
-        // Example sensor data — replace with real variables
+        // DUMMY DATA (TODO: REPLACE WITH SENSOR DATA)
+        String device_ID = WiFi.macAddress();
         float temperature = 25.3;
         float humidity = 60.2;
         int motion = 1;
+        String stat = getStatus();
 
         HTTPClient http;
         http.begin("http://your-server-ip/capstone/serverAPI/api_ingest.php");
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
+        // DUMMY DATA POST
         String postData =
-            "temp=" + String(temperature) +
+            "device_ID=" + device_ID +
+            "&temp=" + String(temperature) +
             "&hum=" + String(humidity) +
-            "&mot=" + String(motion);
+            "&mot=" + String(motion)+
+            "stat=" + status;
 
+        // SEND READINGS TO SERVER
         int httpCode = http.POST(postData);
+        logToFile("POST SENT: " + postData);
 
         Serial.print("HTTP Response Code: ");
         Serial.println(httpCode);
 
-        // Print response from server
         if (httpCode > 0) {
             String payload = http.getString();
             Serial.println("Server Response: " + payload);
+
+            logToFile("SUCCESS: Server replied " + payload);
+        } else {
+            logToFile("ERROR: HTTP POST FAILED. CODE = " + String(httpCode));
         }
 
-        http.end(); // VERY IMPORTANT
+        http.end();
     }
     else {
         Serial.println("Lost WiFi connection!");
+        logToFile("ERROR: Lost WiFi connection.");
     }
 
     delay(5000); // Send every 5 seconds
