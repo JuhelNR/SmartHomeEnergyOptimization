@@ -1,0 +1,1590 @@
+@charset "UTF-8";
+
+
+/* -------------------------------------------------------------------
+ * ## fonts
+ * ------------------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Heebo:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --font-1    : "Inter", sans-serif;
+  --font-2    : "Heebo", sans-serif;
+
+  /* monospace
+   */
+  --font-mono : Consolas, "Andale Mono", Courier, "Courier New", monospace;
+}
+
+/* -------------------------------------------------------------------
+ * ## colors
+ * ------------------------------------------------------------------- */
+:root {
+
+  /* color-1(#3F885C)
+   * color-2(#BA2D0B)
+   */
+  --color-1                       : hsla(144, 37%, 39%, 1);
+  --color-2                       : hsla(12, 89%, 39%, 1);
+
+  /* theme color variations
+   */
+  --color-1-lightest              : hsl(143, 4%, 42%);
+  --color-1-lighter               : hsla(144, 37%, 69%, 1);
+  --color-1-light                 : hsla(144, 37%, 49%, 1);
+  --color-1-dark                  : hsla(144, 37%, 29%, 1);
+  --color-1-darker                : hsla(144, 37%, 19%, 1);
+  --color-1-darkest               : hsla(144, 37%, 9%, 1);
+
+  --color-2-lighter               : hsla(12, 89%, 59%, 1);
+  --color-2-light                 : hsla(12, 89%, 49%, 1);
+  --color-2-dark                  : hsla(12, 89%, 29%, 1);
+  --color-2-darker                : hsla(12, 89%, 19%, 1);
+  --color-2-darkest               : hsla(12, 89%, 9%, 1);
+
+  /* feedback colors
+   * color-error(#ffd1d2), color-success(#c8e675),
+   * color-info(#d7ecfb), color-notice(#fff099)
+   */
+  --color-error                   : hsla(359, 100%, 91%, 1);
+  --color-success                 : hsla(76, 69%, 68%, 1);
+  --color-info                    : hsla(205, 82%, 91%, 1);
+  --color-notice                  : hsla(51, 100%, 80%, 1);
+  --color-error-content           : hsla(359, 50%, 50%, 1);
+  --color-success-content         : hsla(76, 29%, 28%, 1);
+  --color-info-content            : hsla(205, 32%, 31%, 1);
+  --color-notice-content          : hsla(51, 30%, 30%, 1);
+
+  /* shades
+   * generated using
+   * Tint & Shade Generator
+   * (https://maketintsandshades.com/)
+   */
+  --color-black                   : #000000;
+  --color-gray-19                 : #161616;
+  --color-gray-18                 : #2c2c2c;
+  --color-gray-17                 : #424342;
+  --color-gray-16                 : #585958;
+  --color-gray-15                 : #6e6f6f;
+  --color-gray-14                 : #838585;
+  --color-gray-13                 : #999b9b;
+  --color-gray-12                 : #afb2b1;
+  --color-gray-11                 : #c5c8c7;
+  --color-gray-10                 : #dbdedd;
+  --color-gray-9                  : #dfe1e0;
+  --color-gray-8                  : #e2e5e4;
+  --color-gray-7                  : #e6e8e7;
+  --color-gray-6                  : #e9ebeb;
+  --color-gray-5                  : #edefee;
+  --color-gray-4                  : #f1f2f1;
+  --color-gray-3                  : #f4f5f5;
+  --color-gray-2                  : #f8f8f8;
+  --color-gray-1                  : #fbfcfc;
+  --color-white                   : rgb(255, 255, 255);
+  --color-white-light                  : rgba(255, 255, 255, 0.63);
+
+  /* text
+   */
+  --color-text                    : var(--color-gray-19);
+  --color-text-dark               : var(--color-gray-19);
+  --color-text-light              : var(--color-gray-13);
+  --color-placeholder             : var(--color-gray-13);
+
+  /* buttons
+   */
+  --color-btn                     : var(--color-gray-6);
+  --color-btn-text                : var(--color-black);
+  --color-btn-hover               : var(--color-gray-8);
+  --color-btn-hover-text          : var(--color-black);
+  --color-btn-primary             : var(--color-1);
+  --color-btn-primary-text        : var(--color-white);
+  --color-btn-primary-hover       : var(--color-1-dark);
+  --color-btn-primary-hover-text  : var(--color-white);
+  --color-btn-stroke              : var(--color-black);
+  --color-btn-stroke-text         : var(--color-black);
+  --color-btn-stroke-hover        : var(--color-black);
+  --color-btn-stroke-hover-text   : var(--color-white);
+
+  /* preloader
+   */
+  --color-preloader-bg            : var(--color-gray-19);
+  --color-loader                  : white;
+  --color-loader-light            : rgba(255, 255, 255, 0.1);
+  --bacground-color               : rgba(255, 255, 255, 0.87);
+
+  /* others
+   */
+  --color-body                    : #FAFAFA;
+  --color-border                  : rgba(0, 0, 0, 0.08);
+  --border-radius                 : 12px;
+}
+
+/* -------------------------------------------------------------------
+ * ## spacing and typescale
+ * ------------------------------------------------------------------- */
+:root {
+
+  /* spacing
+   * base font size: 18px
+   * vertical space unit : 32px
+   */
+  --base-size         : 62.5%;
+  --multiplier        : 1;
+  --base-font-size    : calc(1.8rem * var(--multiplier));
+  --space             : calc(3.2rem * var(--multiplier));
+
+  /* vertical spacing
+   */
+  --vspace-0_125      : calc(0.125 * var(--space));
+  --vspace-0_25       : calc(0.25 * var(--space));
+  --vspace-0_375      : calc(0.375 * var(--space));
+  --vspace-0_5        : calc(0.5 * var(--space));
+  --vspace-0_625      : calc(0.625 * var(--space));
+  --vspace-0_75       : calc(0.75 * var(--space));
+  --vspace-0_875      : calc(0.875 * var(--space));
+  --vspace-1          : calc(var(--space));
+  --vspace-1_25       : calc(1.25 * var(--space));
+  --vspace-1_5        : calc(1.5 * var(--space));
+  --vspace-1_75       : calc(1.75 * var(--space));
+  --vspace-2          : calc(2 * var(--space));
+  --vspace-2_5        : calc(2.5 * var(--space));
+  --vspace-3          : calc(3 * var(--space));
+  --vspace-3_5        : calc(3.5 * var(--space));
+  --vspace-4          : calc(4 * var(--space));
+  --vspace-4_5        : calc(4.5 * var(--space));
+  --vspace-5          : calc(5 * var(--space));
+
+  /* type scale
+   * ratio 1:2 | base: 18px
+   * -------------------------------------------------------
+   *
+   * --text-display-3 = (77.40px)
+   * --text-display-2 = (64.50px)
+   * --text-display-1 = (53.75px)
+   * --text-xxxl      = (44.79px)
+   * --text-xxl       = (37.32px)
+   * --text-xl        = (31.10px)
+   * --text-lg        = (25.92px)
+   * --text-md        = (21.60px)
+   * --text-size      = (18.00px) BASE
+   * --text-sm        = (15.00px)
+   * --text-xs        = (12.50px)
+   *
+   * ---------------------------------------------------------
+   */
+  --text-scale-ratio  : 1.2;
+  --text-size         : var(--base-font-size);
+  --text-xs           : calc((var(--text-size) / var(--text-scale-ratio)) / var(--text-scale-ratio));
+  --text-sm           : calc(var(--text-xs) * var(--text-scale-ratio));
+  --text-md           : calc(var(--text-sm) * var(--text-scale-ratio) * var(--text-scale-ratio));
+  --text-lg           : calc(var(--text-md) * var(--text-scale-ratio));
+  --text-xl           : calc(var(--text-lg) * var(--text-scale-ratio));
+  --text-xxl          : calc(var(--text-xl) * var(--text-scale-ratio));
+  --text-xxxl         : calc(var(--text-xxl) * var(--text-scale-ratio));
+  --text-display-1    : calc(var(--text-xxxl) * var(--text-scale-ratio));
+  --text-display-2    : calc(var(--text-display-1) * var(--text-scale-ratio));
+  --text-display-3    : calc(var(--text-display-2) * var(--text-scale-ratio));
+
+  /* default button height
+   */
+  --vspace-btn        : var(--vspace-2);
+}
+
+/* on mobile devices below 600px, change the value of '--multiplier'
+ * to adjust the values of base font size and vertical space unit.
+ */
+@media screen and (max-width: 600px) {
+  :root {
+    --multiplier : 0.9375;
+  }
+}
+
+/* -------------------------------------------------------------------
+ * ## grid variables
+ * ------------------------------------------------------------------- */
+:root {
+
+  /* widths for rows and containers
+   */
+  --width-full     : 100%;
+  --width-max      : 1200px;
+  --width-wide     : 1400px;
+  --width-wider    : 1600px;
+  --width-widest   : 1800px;
+  --width-narrow   : 1000px;
+  --width-narrower : 800px;
+  --width-grid-max : var(--width-max);
+
+  /* gutter
+   */
+  --gutter         : 2.2rem;
+}
+
+/* on medium screen devices
+ */
+@media screen and (max-width: 1200px) {
+  :root {
+    --gutter : 2rem;
+  }
+}
+
+/* on mobile devices
+ */
+@media screen and (max-width: 600px) {
+  :root {
+    --gutter : 1rem;
+  }
+}
+
+
+
+/* ====================================================================
+ * # NORMALIZE
+ *
+ *
+ * --------------------------------------------------------------------
+ * normalize.css v8.0.1 | MIT License |
+ * github.com/necolas/normalize.css
+ * -------------------------------------------------------------------- */
+html {
+  line-height              : 1.15;
+  -webkit-text-size-adjust : 100%;
+}
+
+body {
+  margin : 0;
+  font-family: var(--font-1), serif;
+}
+
+
+h1 {
+  font-size : 2em;
+  margin    : 0.67em 0;
+}
+
+hr {
+  box-sizing : content-box;
+  height     : 0;
+  overflow   : visible;
+}
+
+pre {
+  font-family : monospace, monospace;
+  font-size   : 1em;
+}
+
+/* REMOVED: a { background-color : transparent; } - This was conflicting */
+
+/* REMOVED: abbr[title] styles - These add underlines that can affect links */
+
+b,
+strong {
+  font-weight : bolder;
+}
+
+code,
+kbd,
+samp {
+  font-family : monospace, monospace;
+  font-size   : 1em;
+}
+
+small {
+  font-size : 80%;
+}
+
+sub,
+sup {
+  font-size      : 75%;
+  line-height    : 0;
+  position       : relative;
+  vertical-align : baseline;
+}
+
+sub {
+  bottom : -0.25em;
+}
+
+sup {
+  top : -0.5em;
+}
+
+img {
+  border-style : none;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family : inherit;
+  font-size   : 100%;
+  line-height : 1.15;
+  margin      : 0;
+}
+
+button,
+input {
+  overflow : visible;
+}
+
+button,
+select {
+  text-transform : none;
+}
+
+
+
+
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance : button;
+}
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style : none;
+  padding      : 0;
+}
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline : 1px dotted ButtonText;
+}
+
+fieldset {
+  padding : 0.35em 0.75em 0.625em;
+}
+
+legend {
+  box-sizing  : border-box;
+  color       : inherit;
+  display     : table;
+  max-width   : 100%;
+  padding     : 0;
+  white-space : normal;
+}
+
+progress {
+  vertical-align : baseline;
+}
+
+textarea {
+  overflow : auto;
+}
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing : border-box;
+  padding    : 0;
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height : auto;
+}
+
+[type="search"] {
+  -webkit-appearance : textfield;
+  outline-offset     : -2px;
+}
+
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance : none;
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance : button;
+  font               : inherit;
+}
+
+details {
+  display : block;
+}
+
+summary {
+  display : list-item;
+}
+
+template {
+  display : none;
+}
+
+[hidden] {
+  display : none;
+}
+
+
+
+/* ===================================================================
+ * # BASE SETUP
+ *
+ *
+ * ------------------------------------------------------------------- */
+html {
+  font-size  : var(--base-size);
+  box-sizing : border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing : inherit;
+}
+
+html,
+body {
+  height : 100%;
+}
+
+body {
+  background-color            : var(--color-body);
+  -webkit-overflow-scrolling  : touch;
+  -webkit-text-size-adjust    : 100%;
+  -webkit-tap-highlight-color : rgba(0, 0, 0, 0);
+  -webkit-font-smoothing      : antialiased;
+  -moz-osx-font-smoothing     : grayscale;
+  padding: 3em;
+}
+
+
+
+p {
+  font-size      : inherit;
+  text-rendering : optimizeLegibility;
+}
+
+svg,
+img,
+video {
+  max-width : 100%;
+  height    : auto;
+}
+
+pre {
+  overflow : auto;
+}
+
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+p,
+blockquote,
+th,
+td {
+  margin  : 0;
+  padding : 0;
+}
+
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance : none;
+  -moz-appearance    : none;
+  appearance         : none;
+}
+
+/* Your custom styles - now with no conflicts */
+li {
+  list-style: none;
+}
+
+li.active a{
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 10px 15px;
+  font-weight: bolder;
+  color: var(--color-white);
+}
+
+a {
+  color: var(--color-white-light);
+  text-decoration: none;
+  background-color: transparent;
+  border-style: none;
+  font-size: medium;
+}
+
+abbr[title] {
+  border-bottom: none;
+  text-decoration: none;
+}
+
+#navbar{
+  padding-left: 30rem;
+  padding-top: 5rem;
+  padding-right: 4rem;
+  position: fixed; /* Change from sticky to fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  transition: all 0.4s ease;
+}
+
+#navbar.scrolled {
+  padding-top: 2rem; /* Reduce padding when scrolled */
+  background: rgba(0, 0, 0, 0.8); /* Add background when scrolled */
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  width: 100%
+}
+
+.user_name h3{
+  color: var(--color-white);
+}
+
+.user_name span{
+  color: var(--color-1-lightest);
+}
+
+#navbar a,
+.user_name h3,
+.user_name span {
+  transition: color 0.3s ease;
+}
+
+.user_name{
+  text-align: right;
+}
+
+ul{
+  display: flex;
+  align-content: center;
+  gap: 3rem;
+}
+
+.hero_container{
+  background-image: url("../img/Hero-background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 90vh;
+  width: 100%;
+  border-radius: var(--border-radius);
+  position: relative;
+}
+
+.available-for-btn {
+  --animation: 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  column-gap: 2px;
+  color: #178d00;
+  background-color: #e1f9dc;
+  border-radius: 100px;
+  padding: 1rem 1.5rem 1rem 0.5rem;
+  outline: none;
+  border: none;
+  font-weight: 600;
+  position: relative;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+}
+.available-for-btn:hover {
+  background-color: #ffffff;
+}
+.available-for-btn:active {
+  background-color: #e1f9dc;
+  border: solid 2px #178d00;
+}
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: solid 2px #178d00;
+  border-radius: 50%;
+  margin: 0 10px;
+  background-color: transparent;
+  animation: circle-keys var(--animation);
+}
+
+.circle .dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #178d00;
+  animation: dot-keys var(--animation);
+}
+
+.circle .outline {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: outline-keys var(--animation);
+}
+.circle:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.circle:nth-child(2) .dot {
+  animation-delay: 0.3s;
+}
+.circle:nth-child(1) .outline {
+  animation-delay: 0.9s;
+}
+.circle:nth-child(2) .outline {
+  animation-delay: 1.2s;
+}
+@keyframes circle-keys {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dot-keys {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes outline-keys {
+  0% {
+    transform: scale(0);
+    outline: solid 20px var(--color-success);
+    outline-offset: 0;
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    outline: solid 0 transparent;
+    outline-offset: 20px;
+    opacity: 0;
+  }
+}
+
+.go{
+  display: flex;
+  justify-content: space-between;
+}
+
+.secondSection{
+  padding-left: 10rem;
+  padding-right: 4rem;
+  position: absolute;
+  top: 50rem;
+  width: 100%;
+}
+
+
+.card-container{
+  display: flex;
+  gap: 3rem;
+}
+
+.greeting h1{
+  color: var(--color-white);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.05) 0%, rgba(76,155,235,0) 100%);
+  padding: 20px;
+  height: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  align-content: center;
+  border-left: 3px solid var(--color-white);
+}
+
+.card-container{
+  margin-top: 3rem;
+}
+
+.card{
+  border-radius: var(--border-radius);
+  padding: 32px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  width: 400px;
+  height: 250px;
+}
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.status-indicator{
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 12px #22c55e;
+  animation: pulse-glow 2s infinite;
+  display: inline-block;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px 6px #22c55e; }
+  50% { box-shadow: 0 0 25px 12px #22c55e; }
+}
+
+
+.active-room{
+  --room-height: 400px;
+  width: 600px;
+  height: var(--room-height);
+}
+
+.stats{
+  margin-top: 3rem;
+}
+
+.first , .second{
+  display: flex;
+  gap: 5rem;
+}
+
+.first{
+  margin-bottom: 2rem;
+}
+
+
+.mini-card{
+  background: #F5F5F7;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  transition: 0.3s ease;
+  height: 100px;
+  width: 220px;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.mini-card:hover{
+  background: linear-gradient(145deg, #FFFFFF, #FAFAFA);
+  transform: translateY(-8px) rotateX(2deg);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.06);
+  filter: brightness(1.02);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.room h2{
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+}
+
+.indicator{
+  display: flex;
+  gap: 1rem;
+}
+
+
+.room h4{
+  font-size: 1.2rem;
+  font-weight: lighter;
+}
+
+.header span{
+  font-size: 1.2rem;
+  font-weight: 200;
+  color: var(--color-1-lightest);
+}
+
+.header h2{
+  font-size: 3rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-1-darkest);
+}
+
+.temp-logo svg{
+  position: absolute;
+  top: 3rem;
+  right: 3rem;
+  width: 4rem;
+}
+
+.double-decker > * + * {
+  margin-top: 1.5rem;
+}
+
+.double-decker .report{
+  width: 800px;
+  height: calc(var(--room-height)/2.5) ;
+  padding: 25px;
+  scrollbar-width: none;
+  overflow: scroll;
+}
+
+.table{
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  flex: 1;
+  min-height: 0;
+}
+
+.table::-webkit-scrollbar {
+  display: none;
+}
+
+.table-item{
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: #F5F5F7;
+  padding: 12px 18px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  font-family: "Inter", sans-serif;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* each column */
+.warnings, .description {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* divider lines */
+.warnings span{
+  color: rgba(0,0,0,0.35);
+  font-weight: 300;
+}
+
+/* dot for status indicator */
+.dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background:#ff4d4d;
+  box-shadow: 0 0 8px #ff4d4d;
+}
+
+.sensor{
+  font-weight: 600;
+  font-size: 1.4rem;
+}
+
+.reading{
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.status{
+  font-weight: 600;
+  color:#b30303;
+  font-size: 1.4rem;
+}
+
+.report .indicator{
+  justify-content: space-between;
+  padding-right: 15px;
+}
+
+
+.mild{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffdb4d;
+  box-shadow: 0 0 8px #fbdb88;
+}
+
+.stat-mild{
+  color:#ffdb4d;
+}
+
+.double-decker .rooms{
+  height: calc((var(--room-height) - (var(--room-height) / 2.5)) - 1.5rem);
+  overflow: hidden;
+}
+
+.single-room{
+  margin-top: 1.2rem;
+  width: 250px;
+  display: block;
+}
+
+.single-room .allstats{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-right: 2px;
+  padding-left: 2px;
+
+}
+
+.single-room hr{
+  height: 2px;
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  border-radius: 4px;
+  margin-top: 18px;
+}
+
+.roomsContainer{
+  display: flex;
+  gap: 3rem;
+}
+
+.thirdContent {
+  margin-top: 3rem;
+  display: flex;
+  gap: 3rem;
+}
+
+.thirdContent .report {
+  width: 800px;
+  height: calc(var(--room-height) + 15rem);
+  background: #FFFFFF;;
+  border-radius: var(--border-radius);
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.thirdContent .report:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+
+.chartBox {
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 800px;
+  height: 400px;
+  margin-top: 3rem;
+}
+
+canvas {
+  max-width: 100%;
+  height: 100%;
+}
+
+.thirdContent .sensors{
+  height: calc(var(--room-height) + 15rem);
+
+}
+
+
+footer{
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.79), rgba(0, 0, 0, 0.79)),
+    url("../img/footer.jpg");
+  background-size: cover;
+  background-position: top;
+  width: 100%;
+  min-height: 300px;
+  position: absolute;
+  top: 160rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+footer p {
+  margin-top: 150px;
+  letter-spacing: 0.5px;
+  font-size: 1rem;
+  color: white;
+}
+
+
+
+/* ====================================================================
+ * RESPONSIVE DESIGN - Add to the end of your CSS file
+ * Mobile-first approach with breakpoints for all devices
+ * ==================================================================== */
+
+/* ====================================================================
+ * ## LARGE TABLETS & SMALL LAPTOPS (1200px - 1400px)
+ * ==================================================================== */
+@media screen and (max-width: 1400px) {
+
+  /* Reduce navbar side padding */
+  #navbar {
+    padding-left: 10rem;
+    padding-right: 2rem;
+  }
+
+  /* Adjust main content padding */
+  .secondSection {
+    padding-left: 5rem;
+    padding-right: 2rem;
+    top: 45rem;
+  }
+
+  /* Stack cards vertically */
+  .card-container {
+    flex-direction: column;
+  }
+
+  .active-room,
+  .double-decker .report {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  /* Double decker back to row layout on this size */
+  .double-decker {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .double-decker .report {
+    flex: 1;
+  }
+}
+
+
+/* ====================================================================
+ * ## TABLETS (768px - 1200px)
+ * ==================================================================== */
+@media screen and (max-width: 1200px) {
+
+  /* Further reduce navbar padding */
+  #navbar {
+    padding-left: 5rem;
+    padding-right: 2rem;
+    padding-top: 3rem;
+  }
+
+  .navbar-content {
+    padding: 1rem 1.5rem;
+  }
+
+  /* Adjust main content */
+  .secondSection {
+    padding-left: 3rem;
+    padding-right: 2rem;
+    top: 40rem;
+  }
+
+  /* Greeting section */
+  .greeting h1 {
+    font-size: 3rem;
+  }
+
+  /* Cards */
+  .card {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .active-room {
+    width: 100%;
+    height: auto;
+    min-height: 350px;
+  }
+
+  /* Stats layout */
+  .first, .second {
+    gap: 2rem;
+  }
+
+  .mini-card {
+    width: 180px;
+  }
+
+  /* Double decker */
+  .double-decker {
+    flex-direction: column;
+  }
+
+  .double-decker .report {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  /* Room cards */
+  .roomsContainer {
+    gap: 2rem;
+  }
+
+  .single-room {
+    width: 200px;
+  }
+
+  /* Chart */
+  .thirdContent .card {
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .chartBox {
+    height: 350px;
+  }
+}
+
+
+/* ====================================================================
+ * ## MOBILE LANDSCAPE & SMALL TABLETS (600px - 768px)
+ * ==================================================================== */
+@media screen and (max-width: 768px) {
+
+  body {
+    padding: 1.5em;
+  }
+
+  /* Navbar becomes compact */
+  #navbar {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+  }
+
+  .navbar-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .left_links ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .left_links li a {
+    padding: 0.8rem 1.5rem;
+    font-size: 1.4rem;
+  }
+
+  .user_name {
+    text-align: center;
+  }
+
+  /* Hero container */
+  .hero_container {
+    height: auto;
+    min-height: 70vh;
+  }
+
+  /* Main content */
+  .secondSection {
+    position: static;
+    padding: 2rem;
+    margin-top: 2rem;
+  }
+
+  /* Greeting */
+  .go {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .greeting h1 {
+    font-size: 2.5rem;
+    padding: 1.5rem;
+  }
+
+  /* Cards full width */
+  .card-container {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .card,
+  .active-room {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+
+  /* Stats stack vertically */
+  .first, .second {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mini-card {
+    width: 100%;
+    height: auto;
+    min-height: 100px;
+  }
+
+  .room h2 {
+    font-size: 2.5rem;
+  }
+
+  .header h2 {
+    font-size: 2.5rem;
+  }
+
+  /* Double decker */
+  .double-decker {
+    flex-direction: column;
+  }
+
+  .double-decker .report {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+  }
+
+  /* Rooms grid */
+  .roomsContainer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .single-room {
+    width: 100%;
+  }
+
+  /* Chart */
+  .thirdContent {
+    margin-top: 2rem;
+  }
+
+  .thirdContent .card {
+    width: 100%;
+    height: auto;
+  }
+
+  .chartBox {
+    height: 300px;
+    padding: 1rem;
+  }
+
+  /* Notifications table */
+  .table-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .warnings, .description {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+/* ====================================================================
+ * ## MOBILE PORTRAIT (320px - 600px)
+ * ==================================================================== */
+@media screen and (max-width: 600px) {
+
+  body {
+    padding: 1em;
+  }
+
+  /* Navbar ultra compact */
+  #navbar {
+    padding: 1rem;
+  }
+
+  .navbar-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .left_links ul {
+    gap: 0.5rem;
+  }
+
+  .left_links li a {
+    padding: 0.6rem 1.2rem;
+    font-size: 1.3rem;
+  }
+
+  .user_name h3 {
+    font-size: 1.4rem;
+  }
+
+  .user_name span {
+    font-size: 1.2rem;
+  }
+
+  /* Hero */
+  .hero_container {
+    border-radius: 8px;
+  }
+
+  /* Main content */
+  .secondSection {
+    padding: 1.5rem;
+  }
+
+  /* Greeting */
+  .greeting h1 {
+    font-size: 2rem;
+    padding: 1rem;
+  }
+
+  .available-for-btn {
+    padding: 0.8rem 1.5rem 0.8rem 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 2rem;
+    border-radius: 8px;
+  }
+
+  .room h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .room h4 {
+    font-size: 1.2rem;
+  }
+
+  /* Mini cards */
+  .mini-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    gap: 1rem;
+  }
+
+  .header span {
+    font-size: 1.1rem;
+  }
+
+  .header h2 {
+    font-size: 2.5rem;
+  }
+
+  .temp-logo {
+    position: static;
+    align-self: flex-end;
+  }
+
+  .temp-logo svg {
+    position: static;
+    width: 3rem;
+  }
+
+  /* Stats */
+  .stats {
+    margin-top: 2rem;
+  }
+
+  .first, .second {
+    gap: 1rem;
+  }
+
+  /* Notifications */
+  .table-item {
+    padding: 1rem;
+    gap: 0.8rem;
+  }
+
+  .sensor,
+  .reading,
+  .status {
+    font-size: 1.3rem;
+  }
+
+  /* Room cards */
+  .single-room {
+    padding: 1.5rem;
+  }
+
+  .single-room .roomName h1 {
+    font-size: 1.6rem;
+  }
+
+  .singleStat h3 {
+    font-size: 1.6rem;
+  }
+
+  .singleStat span {
+    font-size: 1.1rem;
+  }
+
+  /* Chart */
+  .chartBox {
+    height: 250px;
+    padding: 0.5rem;
+  }
+
+  .thirdContent .card {
+    padding: 2rem;
+  }
+}
+
+
+/* ====================================================================
+ * ## EXTRA SMALL MOBILE (< 400px)
+ * ==================================================================== */
+@media screen and (max-width: 400px) {
+
+  /* Ultra compact navbar */
+  #navbar {
+    padding: 0.8rem;
+  }
+
+  .navbar-content {
+    padding: 0.8rem;
+  }
+
+  .left_links ul {
+    gap: 0.3rem;
+  }
+
+  .left_links li a {
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+  }
+
+  /* Greeting */
+  .greeting h1 {
+    font-size: 1.8rem;
+  }
+
+  /* Cards */
+  .card {
+    padding: 1.5rem;
+  }
+
+  .room h2 {
+    font-size: 1.8rem;
+  }
+
+  /* Mini cards even more compact */
+  .mini-card {
+    padding: 1.2rem;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  /* Chart */
+  .chartBox {
+    height: 220px;
+  }
+}
+
+
+/* ====================================================================
+ * ## LANDSCAPE ORIENTATION FIX
+ * For mobile devices in landscape mode
+ * ==================================================================== */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+
+  .hero_container {
+    height: auto;
+    min-height: 90vh;
+  }
+
+  #navbar {
+    padding-top: 1rem;
+  }
+
+  .secondSection {
+    margin-top: 1rem;
+  }
+
+  .greeting h1 {
+    font-size: 2rem;
+  }
+}
+
+
+/* ====================================================================
+ * ## UTILITY RESPONSIVE CLASSES
+ * ==================================================================== */
+
+/* Hide on mobile */
+@media screen and (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media screen and (min-width: 769px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+.mobile-only {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .mobile-only {
+    display: block;
+  }
+}

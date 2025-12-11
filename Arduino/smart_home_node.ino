@@ -2,8 +2,8 @@
 #include <HTTPClient.h>
 #include <SPIFFS.h>
 
-const char* ssid = "WIFI_NAME";
-const char* password = "WIFI_PASS";
+const char* ssid = "WIFI_NAME";             // TODO: CHANGE THIS TO WIFI NAME
+const char* password = "WIFI_PASS";         // TODO: CHANGE THIS TO WIFI PASSWORD
 
 // FUNCTION TO LOG MESSAGES INTO /log.txt
 void logToFile(String message) {
@@ -17,9 +17,10 @@ void logToFile(String message) {
     logFile.close();
 }
 
-String getStatus(){
+bool getStatus(){
 
        //TODO: THIS WILL RETURN A GENERAL SYSTEM STATUS
+       //RETURN 0(IF ALL SYSTEMS ARE OK) 1(IF ERRORS OCCURRED)
 }
 
 void setup() {
@@ -64,7 +65,7 @@ void loop() {
         float temperature = 25.3;
         float humidity = 60.2;
         int motion = 1;
-        String stat = getStatus();
+        bool stat = getStatus();
 
         HTTPClient http;
         http.begin("http://your-server-ip/capstone/serverAPI/api_ingest.php");
@@ -76,7 +77,7 @@ void loop() {
             "&temp=" + String(temperature) +
             "&hum=" + String(humidity) +
             "&mot=" + String(motion)+
-            "stat=" + status;
+            "stat=" + String(stat);
 
         // SEND READINGS TO SERVER
         int httpCode = http.POST(postData);

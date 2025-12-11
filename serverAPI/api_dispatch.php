@@ -30,7 +30,7 @@ else{
 
     try{
 
-        //QUERY DATABSE
+        //QUERY DATABASE
         $result = conn->executeQuery("SELECT * FROM readings ORDER BY id DESC LIMIT 1");
         $row = $result->fetch(PDO::FETCH_ASSOC);
 
