@@ -1,8 +1,10 @@
-<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 $host = "Localhost";
 $user =  "root";
-$pass = "";
+$pass = "Maya@22";
 $dbname = "capstone";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
