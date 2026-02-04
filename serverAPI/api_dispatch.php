@@ -1,9 +1,12 @@
 <?php
-require "../vendor/autoload.php";
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+
+require_once "../config/connect.php";
 
 //ERROR LOG FILE PATH CONFIG
 $logDir = "../monitoring";
-$logFile = $logDir . "/api_dispatch.log";
+$logFile = $logDir . "/api_dispatcher.log";
 
 //CREATE DIRECTORY IF IT DOESN'T EXIST
 if (!is_dir($logDir)) {
@@ -17,350 +20,414 @@ function logError($message) {
     file_put_contents($logFile, "[$timestamp] $message\n", FILE_APPEND);
 }
 
-$method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
-logError("DISPATCH REQUEST: Method=$method, Action=$action");
-
-// Route dashboard requests
 try {
     switch($action) {
-        case 'get_dashboard_data':
-            if ($method === 'GET' || $method === 'POST') {
-                getDashboardData();
-            } else {
-                logError("Invalid method for get_dashboard_data: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+        // Your existing cases...
+        case 'get_commands':
+            getControlCommands();
             break;
 
-        case 'get_latest_reading':
-            if ($method === 'GET' || $method === 'POST') {
-                getLatestReading();
-            } else {
-                logError("Invalid method for get_latest_reading: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+        case 'get_keypad_events':
+            getKeypadEvents();
+            break;
+
+        case 'get_system_status':
+            getSystemStatus();
             break;
 
         case 'send_command':
-            if ($method === 'POST') {
-                sendCommand();
-            } else {
-                logError("Invalid method for send_command: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+                sendControlCommand();
             break;
-
-        case 'get_alerts':
-            if ($method === 'GET') {
-                getAlerts();
-            } else {
-                logError("Invalid method for get_alerts: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+        
+        // NEW: Dashboard endpoints
+        case 'get_latest_data':
+            getLatestData();
             break;
-
-        case 'resolve_alert':
-            if ($method === 'POST') {
-                resolveAlert();
-            } else {
-                logError("Invalid method for resolve_alert: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
-            break;
-
+        
         case 'get_room_data':
-            if ($method === 'GET') {
-                getRoomData();
-            } else {
-                logError("Invalid method for get_room_data: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+            getRoomData();
+            break;
+        
+        case 'get_alerts':
+            getAlerts();
+            break;
+        
+        case 'get_chart_data':
+            getChartData();
             break;
 
-        case 'update_config':
-            if ($method === 'POST') {
-                updateConfig();
-            } else {
-                logError("Invalid method for update_config: $method");
-                echo json_encode(['error' => 'Method not allowed']);
-            }
+        case 'get_config':
+            system_config();
             break;
-
+            
         default:
-            // Default to your original behavior - get latest reading
-            getLatestReading();
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid action']);
     }
 } catch (Exception $e) {
-    logError("EXCEPTION: " . $e->getMessage());
-    echo json_encode(['error' => 'Server error occurred: ' . $e->getMessage()]);
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
 }
 
-// ==================== FUNCTION DEFINITIONS ====================
+// ==================== EXISTING FUNCTIONS ====================
+// (Keep your existing getControlCommands function here)
 
-function getLatestReading() {
-    try {
-        //QUERY DATABASE
-        $result = conn::executeQuery("SELECT * FROM readings ORDER BY id DESC LIMIT 1");
-        $row = $result->fetch(PDO::FETCH_ASSOC);
+function getControlCommands() {
+    global $conn;
 
-        //IF DATA FETCH FAILS
-        if (!$row) {
-            logError("NO RECORDS FOUND IN readings TABLE.");
-            echo json_encode(["error" => "No data available"]);
-            exit();
-        } else {
-            //RETURN RESULT AS JSON FILE
-            echo json_encode($row);
-            logError("SUCCESS: Latest reading dispatched");
+    $sql = "SELECT * FROM control_commands WHERE processed = FALSE ORDER BY created_at ASC";
+    $result = $conn->query($sql);
 
-            //CLOSE CONNECTION
-            conn::closeConnection();
-        }
-    } catch(Exception $e) {
-        //LOG EXCEPTION ERROR
-        logError("EXCEPTION: " . $e->getMessage());
-        echo json_encode(["error" => "Server error occurred"]);
-        exit();
-    }
-}
-
-// Get complete dashboard data (all rooms, devices, alerts)
-function getDashboardData() {
-    try {
-        // Get latest sensor readings for each room
-        $sensorQuery = "SELECT sr1.* FROM room_sensors sr1
-                       INNER JOIN (
-                           SELECT room, MAX(timestamp) as max_time
-                           FROM room_sensors
-                           GROUP BY room
-                       ) sr2 ON sr1.room = sr2.room AND sr1.timestamp = sr2.max_time";
-        $sensorResult = conn::executeQuery($sensorQuery);
-
-        $sensors = [];
-        while ($row = $sensorResult->fetch(PDO::FETCH_ASSOC)) {
-            $sensors[] = $row;
-        }
-
-        // Get device status
-        $deviceQuery = "SELECT * FROM device_status ORDER BY room, device_type";
-        $deviceResult = conn::executeQuery($deviceQuery);
-
-        $devices = [];
-        while ($row = $deviceResult->fetch(PDO::FETCH_ASSOC)) {
-            $devices[] = $row;
-        }
-
-        // Get unresolved alerts
-        $alertQuery = "SELECT * FROM system_alerts 
-                      WHERE resolved = FALSE 
-                      ORDER BY created_at DESC 
-                      LIMIT 10";
-        $alertResult = conn::executeQuery($alertQuery);
-
-        $alerts = [];
-        while ($row = $alertResult->fetch(PDO::FETCH_ASSOC)) {
-            $alerts[] = $row;
-        }
-
-        // Get system status
-        $statusQuery = "SELECT * FROM system_status ORDER BY last_seen DESC LIMIT 1";
-        $statusResult = conn::executeQuery($statusQuery);
-        $systemStatus = $statusResult->fetch(PDO::FETCH_ASSOC);
-
-        logError("SUCCESS: Dashboard data retrieved - " . count($sensors) . " rooms, " . count($devices) . " devices");
-
-        echo json_encode([
-            'sensors' => $sensors,
-            'devices' => $devices,
-            'alerts' => $alerts,
-            'system_status' => $systemStatus,
-            'timestamp' => date('Y-m-d H:i:s')
-        ]);
-
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to get dashboard data - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-// Dashboard sends control command to ESP32
-function sendCommand() {
-    $data = json_decode(file_get_contents('php://input'), true);
-
-    if (!$data) {
-        logError("ERROR: Invalid JSON data for send_command");
-        echo json_encode(['error' => 'Invalid JSON data']);
+    if (!$result) {
+        http_response_code(500);
+        echo json_encode(['error' => $conn->error]);
         return;
     }
 
-    logError("Command received from dashboard: " . json_encode($data));
-
-    try {
-        $device_id = $data['device_id'] ?? '';
-        $room = $data['room'] ?? '';
-        $device_type = $data['device_type'] ?? '';
-        $action = $data['action'] ?? '';
-        $value = $data['value'] ?? null;
-        $mode = $data['mode'] ?? 'manual';
-
-        $query = "INSERT INTO control_commands (device_id, room, device_type, action, value, mode) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
-
-        conn::executeQuery($query, [$device_id, $room, $device_type, $action, $value, $mode]);
-
-        logError("SUCCESS: Command queued - " . $room . " " . $device_type . " " . $action);
-        echo json_encode(['success' => true, 'message' => 'Command queued for ESP32']);
-
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to queue command - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
+    $commands = [];
+    while ($row = $result->fetch_assoc()) {
+        $commands[] = $row;
     }
-}
 
-// Get system alerts
-function getAlerts() {
-    $resolved = $_GET['resolved'] ?? 'false';
-    $limit = $_GET['limit'] ?? 50;
-
-    try {
-        $query = "SELECT * FROM system_alerts 
-                 WHERE resolved = ? 
-                 ORDER BY created_at DESC 
-                 LIMIT ?";
-
-        $result = conn::executeQuery($query, [$resolved === 'true' ? 1 : 0, (int)$limit]);
-
-        $alerts = [];
-        while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-            $alerts[] = $row;
+    // Mark commands as processed
+    if (!empty($commands)) {
+        $ids = array_column($commands, 'id');
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        
+        $updateSql = "UPDATE control_commands SET processed = TRUE WHERE id IN ($placeholders)";
+        $stmt = $conn->prepare($updateSql);
+        
+        if ($stmt) {
+            $types = str_repeat('i', count($ids));
+            $stmt->bind_param($types, ...$ids);
+            $stmt->execute();
+            $stmt->close();
         }
-
-        logError("SUCCESS: Retrieved " . count($alerts) . " alerts");
-        echo json_encode(['alerts' => $alerts]);
-
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to get alerts - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
     }
+
+    http_response_code(200);
+    echo json_encode(['commands' => $commands]);
 }
 
-// Resolve an alert
-function resolveAlert() {
-    $data = json_decode(file_get_contents('php://input'), true);
+// ==================== NEW DASHBOARD FUNCTIONS ====================
 
-    if (!$data || !isset($data['alert_id'])) {
-        logError("ERROR: Invalid data for resolve_alert");
-        echo json_encode(['error' => 'Invalid data']);
-        return;
+// Get latest sensor data for all rooms
+function getLatestData() {
+    global $conn;
+    
+    $sql = "SELECT 
+                rs.room,
+                rs.temperature,
+                rs.humidity,
+                rs.motion_detected,
+                rs.light_level,
+                rs.current_reading,
+                rs.timestamp
+            FROM room_sensors rs
+            INNER JOIN (
+                SELECT room, MAX(id) as max_id
+                FROM room_sensors
+                GROUP BY room
+            ) latest ON rs.room = latest.room AND rs.id = latest.max_id
+            ORDER BY rs.room";
+    
+    $result = $conn->query($sql);
+    
+    if (!$result) {
+        throw new Exception($conn->error);
     }
-
-    try {
-        $alert_id = $data['alert_id'];
-
-        $query = "UPDATE system_alerts 
-                 SET resolved = TRUE, resolved_at = NOW() 
-                 WHERE id = ?";
-
-        conn::executeQuery($query, [$alert_id]);
-
-        logError("SUCCESS: Alert #" . $alert_id . " resolved");
-        echo json_encode(['success' => true, 'message' => 'Alert resolved']);
-
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to resolve alert - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-// Get data for a specific room
-function getRoomData() {
-    $room = $_GET['room'] ?? '';
-
-    if (!$room) {
-        logError("ERROR: Room parameter missing");
-        echo json_encode(['error' => 'Room parameter required']);
-        return;
-    }
-
-    try {
-        // Get latest sensor reading for this room
-        $sensorQuery = "SELECT * FROM room_sensors 
-                       WHERE room = ? 
-                       ORDER BY timestamp DESC 
-                       LIMIT 1";
-        $sensorResult = conn::executeQuery($sensorQuery, [$room]);
-        $sensorData = $sensorResult->fetch(PDO::FETCH_ASSOC);
-
+    
+    $rooms = [];
+    while ($row = $result->fetch_assoc()) {
         // Get device status for this room
-        $deviceQuery = "SELECT * FROM device_status WHERE room = ?";
-        $deviceResult = conn::executeQuery($deviceQuery, [$room]);
-
-        $devices = [];
-        while ($row = $deviceResult->fetch(PDO::FETCH_ASSOC)) {
-            $devices[] = $row;
+        $deviceSql = "SELECT device_type, status, brightness 
+                      FROM device_status 
+                      WHERE room = ? 
+                      ORDER BY last_updated DESC";
+        $stmt = $conn->prepare($deviceSql);
+        $stmt->bind_param("s", $row['room']);
+        $stmt->execute();
+        $deviceResult = $stmt->get_result();
+        
+        $lightStatus = false;
+        $brightness = 0;
+        $fanStatus = false;
+        
+        while ($device = $deviceResult->fetch_assoc()) {
+            if ($device['device_type'] === 'light') {
+                $lightStatus = (bool)$device['status'];
+                $brightness = (int)$device['brightness'];
+            } elseif ($device['device_type'] === 'fan') {
+                $fanStatus = (bool)$device['status'];
+            }
         }
-
-        // Get recent sensor history (last 10 readings)
-        $historyQuery = "SELECT * FROM room_sensors 
-                        WHERE room = ? 
-                        ORDER BY timestamp DESC 
-                        LIMIT 10";
-        $historyResult = conn::executeQuery($historyQuery, [$room]);
-
-        $history = [];
-        while ($row = $historyResult->fetch(PDO::FETCH_ASSOC)) {
-            $history[] = $row;
-        }
-
-        logError("SUCCESS: Room data retrieved for " . $room);
-
-        echo json_encode([
-            'room' => $room,
-            'current_sensors' => $sensorData,
-            'devices' => $devices,
-            'history' => $history
-        ]);
-
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to get room data - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
+        $stmt->close();
+        
+        $rooms[] = [
+            'room' => $row['room'],
+            'temperature' => (float)$row['temperature'],
+            'humidity' => (float)$row['humidity'],
+            'motion_detected' => (bool)$row['motion_detected'],
+            'light_level' => (int)$row['light_level'],
+            'current' => (float)$row['current_reading'],
+            'light_status' => $lightStatus,
+            'brightness' => $brightness,
+            'fan_status' => $fanStatus,
+            'timestamp' => $row['timestamp']
+        ];
     }
+    
+    echo json_encode(['success' => true, 'data' => $rooms]);
 }
 
-// Update system configuration
-function updateConfig() {
-    $data = json_decode(file_get_contents('php://input'), true);
+// Get specific room data
+function getRoomData() {
+    global $conn;
+    
+    $room = $_GET['room'] ?? '';
+    
+    if (empty($room)) {
+        throw new Exception('Room parameter required');
+    }
+    
+    $sql = "SELECT * FROM room_sensors 
+            WHERE room = ? 
+            ORDER BY timestamp DESC 
+            LIMIT 1";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $room);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($row = $result->fetch_assoc()) {
+        echo json_encode(['success' => true, 'data' => $row]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No data found']);
+    }
+    
+    $stmt->close();
+}
 
-    if (!$data || !isset($data['config_key']) || !isset($data['config_value'])) {
-        logError("ERROR: Invalid data for update_config");
-        echo json_encode(['error' => 'Invalid data']);
+// Send control command
+function sendControlCommand() {
+    global $conn;
+    
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+    if (!$data) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid JSON']);
+        return;
+    }
+    
+    $room = $data['room'] ?? '';
+    $device_type = $data['device_type'] ?? '';
+    $action = $data['action'] ?? '';
+    $value = isset($data['value']) ? (int)$data['value'] : 255;
+    $mode = $data['mode'] ?? 'manual';
+    
+    // Validate inputs
+    if (empty($room) || empty($device_type) || empty($action)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing required fields: room, device_type, action']);
+        return;
+    }
+    
+    // Insert command into database
+    $sql = "INSERT INTO control_commands (room, device_type, action, value, mode, processed, created_at) 
+            VALUES (?, ?, ?, ?, ?, FALSE, NOW())";
+    
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Database prepare failed: ' . $conn->error]);
+        return;
+    }
+    
+    $stmt->bind_param("sssis", $room, $device_type, $action, $value, $mode);
+    
+    if ($stmt->execute()) {
+        $command_id = $stmt->insert_id;
+        
+        http_response_code(200);
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Command sent successfully',
+            'command_id' => $command_id,
+            'room' => $room,
+            'device' => $device_type,
+            'action' => $action,
+            'mode' => $mode
+        ]);
+        
+        // Log success
+        error_log("Control command sent: Room=$room, Device=$device_type, Action=$action, Mode=$mode");
+        
+    } else {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to insert command: ' . $stmt->error]);
+        error_log("Control command failed: " . $stmt->error);
+    }
+    
+    $stmt->close();
+}
+
+
+//Get system configuration
+
+function system_config(){
+    global $conn;
+
+    $sql = "SELECT * FROM system_config";
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        logError("ERROR: Query failed for system_config - " . $conn->error);
+        http_response_code(500);
+        echo json_encode(['error' => $conn->error]);
         return;
     }
 
-    try {
-        $config_key = $data['config_key'];
-        $config_value = $data['config_value'];
+    $configArray = [];
+    while ($row = $result->fetch_assoc()) {
+        $configArray[$row['config_key']] = $row['config_value'];
+    }
 
-        $query = "UPDATE system_config 
-                 SET config_value = ?, last_updated = NOW() 
-                 WHERE config_key = ?";
+    logError("SUCCESS: Configuration retrieved (" . count($configArray) . " settings)");
 
-        conn::executeQuery($query, [$config_value, $config_key]);
+    http_response_code(200);
+    echo json_encode(['config' => $configArray]);
+}
 
-        logError("SUCCESS: Configuration updated - " . $config_key . " = " . $config_value);
-        echo json_encode(['success' => true, 'message' => 'Configuration updated']);
+// Get recent alerts
+function getAlerts() {
+    global $conn;
+    
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+    
+    $sql = "SELECT 
+                alert_type,
+                room,
+                message,
+                severity,
+                created_at
+            FROM system_alerts 
+            ORDER BY created_at DESC 
+            LIMIT ?";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $alerts = [];
+    while ($row = $result->fetch_assoc()) {
+        $alerts[] = [
+            'alert_type' => $row['alert_type'],
+            'room' => $row['room'],
+            'message' => $row['message'],
+            'severity' => $row['severity'],
+            'created_at' => $row['created_at']
+        ];
+    }
+    
+    echo json_encode(['success' => true, 'alerts' => $alerts]);
+    $stmt->close();
+}
 
-        conn::closeConnection();
-    } catch(Exception $e) {
-        logError("ERROR: Failed to update config - " . $e->getMessage());
-        echo json_encode(['error' => $e->getMessage()]);
+// Get historical data for charts
+function getChartData() {
+    global $conn;
+    
+    $room = $_GET['room'] ?? 'living_room';
+    $hours = isset($_GET['hours']) ? (int)$_GET['hours'] : 24;
+    
+    $sql = "SELECT 
+                DATE_FORMAT(timestamp, '%H:%i') as time,
+                temperature,
+                humidity,
+                light_level,
+                timestamp
+            FROM room_sensors 
+            WHERE room = ? 
+            AND timestamp >= DATE_SUB(NOW(), INTERVAL ? HOUR)
+            ORDER BY timestamp ASC";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $room, $hours);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = [
+            'time' => $row['time'],
+            'temperature' => (float)$row['temperature'],
+            'humidity' => (float)$row['humidity'],
+            'light_level' => (int)$row['light_level']
+        ];
+    }
+    
+    echo json_encode(['success' => true, 'data' => $data]);
+    $stmt->close();
+}
+
+// Get recent keypad events
+function getKeypadEvents() {
+    global $conn;
+    
+    $since = $_GET['since'] ?? '10 SECOND';
+    
+    $sql = "SELECT id, key_pressed, action, success, timestamp 
+            FROM keypad_events 
+            WHERE timestamp >= DATE_SUB(NOW(), INTERVAL $since)
+            ORDER BY timestamp ASC";
+    
+    $result = $conn->query($sql);
+    
+    $events = [];
+    while ($row = $result->fetch_assoc()) {
+        $events[] = [
+            'id' => (int)$row['id'],
+            'key' => $row['key_pressed'],
+            'action' => $row['action'],
+            'success' => (bool)$row['success'],
+            'timestamp' => $row['timestamp']
+        ];
+    }
+    
+    echo json_encode(['success' => true, 'events' => $events]);
+}
+
+// Get system status
+function getSystemStatus() {
+    global $conn;
+    
+    $sql = "SELECT status, last_seen 
+            FROM system_status 
+            WHERE device_id = 'ESP32_MAIN_001'
+            ORDER BY last_seen DESC 
+            LIMIT 1";
+    
+    $result = $conn->query($sql);
+    
+    if ($row = $result->fetch_assoc()) {
+        echo json_encode([
+            'success' => true,
+            'system_on' => (bool)$row['status'],
+            'last_seen' => $row['last_seen']
+        ]);
+    } else {
+        echo json_encode([
+            'success' => true,
+            'system_on' => false,
+            'last_seen' => null
+        ]);
     }
 }
+
 ?>
