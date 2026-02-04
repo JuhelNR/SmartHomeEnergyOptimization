@@ -27,10 +27,256 @@
 </head>
 
 <body>
+<!-- ======================================================
+                   KEYPAD AUTHENTICATION OVERLAY
+======================================================== -->
+<div id="auth-overlay" class="auth-overlay">
+  <div class="auth-modal">
+    <div class="auth-header">
+      <div class="lock-icon">🔒</div>
+      <h2>Smart Home System Locked</h2>
+      <p>Enter PIN on physical keypad to unlock</p>
+    </div>
+    
+    <div class="keypad-status">
+      <div class="status-indicatr">
+        <span class="pulse-dot"></span>
+        <span>Waiting for keypad input...</span>
+      </div>
+    </div>
+    
+    <div class="pin-display">
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+      <div class="pin-dot" id="dot4"></div>
+    </div>
+    
+    <div class="pin-feedback" id="pin-feedback"></div>
+    
+    <div class="auth-footer">
+      <p>Using physical keypad on ESP32 device</p>
+      <p class="hint">Default PIN: <strong>1234</strong></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ======================================================
+                   REMOTE CONTROL OVERLAY
+======================================================== -->
+<div id="remote-overlay" class="remote-overlay" style="display: none;">
+  <div class="remote-container">
+    
+    <!-- Header -->
+    <div class="header">
+      <h1>Remote Control</h1>
+      <button class="close-remote-btn" onclick="closeRemote()">×</button>
+    </div>
+
+    <!-- Rooms Grid -->
+    <div class="rooms-grid">
+      
+      <!-- Living Room -->
+      <div class="room-card" data-room="living_room">
+        <div class="room-header">
+          <div class="room-info">
+            <div class="room-icon">🛋️</div>
+            <div class="room-name">Living Room</div>
+          </div>
+          <div class="status-badge" id="living_room-status">Idle</div>
+        </div>
+
+        <!-- Temperature & Humidity Stats -->
+        <div class="room-stats">
+          <div class="stat-item">
+            <span class="stat-label">Temperature</span>
+            <span class="stat-value"><span id="living_room-temp">--</span>°C</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Humidity</span>
+            <span class="stat-value"><span id="living_room-humidity">--</span>%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Light Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>💡 Light</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('living_room', 'light', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('living_room', 'light', 'off')">OFF</button>
+          </div>
+          
+          <!-- Brightness Slider -->
+          <div class="brightness-group">
+            <label>Brightness</label>
+            <input type="range" 
+                   id="living_room-brightness" 
+                   min="0" 
+                   max="255" 
+                   value="200" 
+                   onchange="updateBrightness('living_room', this.value)">
+            <span id="living_room-brightness-value" class="brightness-percent">78%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Fan Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>🌀 Fan</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('living_room', 'fan', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('living_room', 'fan', 'off')">OFF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kitchen -->
+      <div class="room-card" data-room="kitchen">
+        <div class="room-header">
+          <div class="room-info">
+            <div class="room-icon">🍳</div>
+            <div class="room-name">Kitchen</div>
+          </div>
+          <div class="status-badge" id="kitchen-status">Idle</div>
+        </div>
+
+        <!-- Temperature & Humidity Stats -->
+        <div class="room-stats">
+          <div class="stat-item">
+            <span class="stat-label">Temperature</span>
+            <span class="stat-value"><span id="kitchen-temp">--</span>°C</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Humidity</span>
+            <span class="stat-value"><span id="kitchen-humidity">--</span>%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Light Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>💡 Light</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('kitchen', 'light', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('kitchen', 'light', 'off')">OFF</button>
+          </div>
+          
+          <!-- Brightness Slider -->
+          <div class="brightness-group">
+            <label>Brightness</label>
+            <input type="range" 
+                   id="kitchen-brightness" 
+                   min="0" 
+                   max="255" 
+                   value="200" 
+                   onchange="updateBrightness('kitchen', this.value)">
+            <span id="kitchen-brightness-value" class="brightness-percent">78%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Fan Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>🌀 Fan</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('kitchen', 'fan', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('kitchen', 'fan', 'off')">OFF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bedroom -->
+      <div class="room-card" data-room="bedroom">
+        <div class="room-header">
+          <div class="room-info">
+            <div class="room-icon">🛏️</div>
+            <div class="room-name">Bedroom</div>
+          </div>
+          <div class="status-badge" id="bedroom-status">Idle</div>
+        </div>
+
+        <!-- Temperature & Humidity Stats -->
+        <div class="room-stats">
+          <div class="stat-item">
+            <span class="stat-label">Temperature</span>
+            <span class="stat-value"><span id="bedroom-temp">--</span>°C</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Humidity</span>
+            <span class="stat-value"><span id="bedroom-humidity">--</span>%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Light Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>💡 Light</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('bedroom', 'light', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('bedroom', 'light', 'off')">OFF</button>
+          </div>
+          
+          <!-- Brightness Slider -->
+          <div class="brightness-group">
+            <label>Brightness</label>
+            <input type="range" 
+                   id="bedroom-brightness" 
+                   min="0" 
+                   max="255" 
+                   value="200" 
+                   onchange="updateBrightness('bedroom', this.value)">
+            <span id="bedroom-brightness-value" class="brightness-percent">78%</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Fan Controls -->
+        <div class="control-group">
+          <div class="control-label">
+            <span>🌀 Fan</span>
+          </div>
+          <div class="button-group">
+            <button class="remote-btn on" onclick="sendCommand('bedroom', 'fan', 'on')">ON</button>
+            <button class="remote-btn off" onclick="sendCommand('bedroom', 'fan', 'off')">OFF</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer with Auto Mode Button -->
+    <div class="remote-footer">
+      <button class="auto-mode-button" onclick="setAllAutoMode()">
+        🔄 Return All to AUTO Mode
+      </button>
+    </div>
+
+  </div>
+</div>
 
 <!-- ======================================================
                        HERO CONTAINER
 ======================================================== -->
+
+
 
 <nav id="navbar">
   <div class="navbar-content">
@@ -41,7 +287,7 @@
         <li class="active"><a href="index.html">Home</a></li>
         <li><a href="rooms.html">Rooms</a></li>
         <li><a href="analytics.html">Analytics</a></li>
-        <li><a href="remote">Remote</a></li>
+        <li><a href="javascript:void(0)" onclick="openRemote()">Remote</a></li>
       </ul>
     </div>
 
@@ -76,10 +322,10 @@
       <div class="optimal">
         <button class="available-for-btn">
           <div class="circle">
-            <div class="dot"></div>
+            <div class="dott"></div>
             <div class="outline"></div>
           </div>
-          Peak performance
+          <span id="system-status-text">Peak performance</span>
         </button>
       </div>
     </div>
@@ -90,12 +336,12 @@
     <div class="card-container">
 
       <!-- Active Room Starts -->
-      <div class="card active-room">
+      <div class="card active-room" id="active-room-card">
         <div class="room">
-          <h2>Living Room • 🛋️</h2>
+          <h2 id="active-room-name">Living Room • 🛋️</h2>
           <div class="indicator">
-            <span class="status-indicator"></span>
-            <h4>Occupied • Active now</h4>
+            <span class="status-indicator" id="active-room-indicator"></span>
+            <h4 id="active-room-status">Waiting for data...</h4>
           </div>
         </div>
         <!-- Stats Section -->
@@ -108,7 +354,7 @@
             <div class="mini-card temp">
               <div class="header">
                 <span>Temperature</span>
-                <h2>72°</h2>
+                <h2 id="active-temp">--°</h2>
                 <span>Fahrenheit</span>
               </div>
               <div class="temp-logo">
@@ -124,7 +370,7 @@
             <div class="mini-card hum">
               <div class="header">
                 <span>Humidity</span>
-                <h2>30%</h2>
+                <h2 id="active-humidity">--%</h2>
                 <span>Relative</span>
               </div>
               <div class="temp-logo">
@@ -144,7 +390,7 @@
             <div class="mini-card temp">
               <div class="header">
                 <span>Light Level</span>
-                <h2>60%</h2>
+                <h2 id="active-light">--%</h2>
                 <span>Brightness</span>
               </div>
               <div class="temp-logo">
@@ -160,7 +406,7 @@
             <div class="mini-card temp">
               <div class="header">
                 <span>Occupants</span>
-                <h2>01</h2>
+                <h2 id="active-occupants">--</h2>
                 <span>Person(s)</span>
               </div>
               <div class="temp-logo">
@@ -189,42 +435,10 @@
               <h4>Show all</h4>
             </div>
 
-            <div class="table">
-              <!-- Single Notification -->
-              <div class="table-item">
-                <div class="warnings">
-                  <div class="sensor">Temperature</div>
-                  <span>|</span></div>
-                <div class="warnings">
-                  <div class="reading">72°</div>
-                  <span>|</span></div>
-                <div class="description"><span class="dot"></span>
-                  <div class="status">Critical</div>
-                </div>
-              </div>
-
-              <div class="table-item">
-                <div class="warnings">
-                  <div class="sensor">Humidity</div>
-                  <span>|</span></div>
-                <div class="warnings">
-                  <div class="reading">80%</div>
-                  <span>|</span></div>
-                <div class="description"><span class="dot"></span>
-                  <div class="status">Critical</div>
-                </div>
-              </div>
-
-              <div class="table-item">
-                <div class="warnings">
-                  <div class="sensor">Humidity</div>
-                  <span>|</span></div>
-                <div class="warnings">
-                  <div class="reading">50%</div>
-                  <span>|</span></div>
-                <div class="description"><span class="dot mild"></span>
-                  <div class="status stat-mild">Mild</div>
-                </div>
+            <div class="table" id="notifications-container">
+              <!-- Notifications will be dynamically inserted here -->
+              <div class="loading-placeholder">
+                <p style="text-align: center; color: #999; padding: 2rem;">Loading notifications...</p>
               </div>
             </div>
           </div>
@@ -240,39 +454,11 @@
             <div class="indicator"><h4>House Activity Map</h4></div>
           </div>
 
-          <div class="roomsContainer">
-
-            <!-- Room Card -->
-            <div class="single-room mini-card">
-              <div class="roomName"><h1>Living Room 🛋️</h1></div>
-              <hr>
-              <div class="allstats">
-                <div class="singleStat"><h3>72°</h3><span>Temp</span></div>
-                <div class="SingleStat"><h3>70%</h3><span>Hum</span></div>
-                <div class="SingleStat"><h3>01</h3><span>Per</span></div>
-              </div>
+          <div class="roomsContainer" id="rooms-container">
+            <!-- Room cards will be dynamically inserted here -->
+            <div class="loading-placeholder">
+              <p style="text-align: center; color: #999; padding: 2rem;">Loading rooms...</p>
             </div>
-
-            <div class="single-room mini-card">
-              <div class="roomName"><h1>Bedroom 🛏️</h1></div>
-              <hr>
-              <div class="allstats">
-                <div class="singleStat"><h3>72°</h3><span>Temp</span></div>
-                <div class="SingleStat"><h3>70%</h3><span>Hum</span></div>
-                <div class="SingleStat"><h3>00</h3><span>Per</span></div>
-              </div>
-            </div>
-
-            <div class="single-room mini-card">
-              <div class="roomName"><h1>Kitchen 🍳</h1></div>
-              <hr>
-              <div class="allstats">
-                <div class="singleStat"><h3>72°</h3><span>Temp</span></div>
-                <div class="SingleStat"><h3>70%</h3><span>Hum</span></div>
-                <div class="SingleStat"><h3>00</h3><span>Per</span></div>
-              </div>
-            </div>
-
           </div>
         </div>
         <!-- Rooms Stats Ends -->
@@ -300,9 +486,10 @@
           <div class="indicator">
             <h4>Active Sensors</h4>
           </div>
-
+          <div class="sensors-list" id="sensors-list">
+            <!-- Sensor status will be shown here -->
+          </div>
         </div>
-
       </div>
 
 
@@ -322,7 +509,6 @@
 </footer>
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-<script type="module" src="js/app.js"></script>
+<script src="js/app.js"></script> <!-- REMOVED type="module" -->
 </body>
 </html>
-
